@@ -36,4 +36,8 @@ Thumbs.db
 
 # Docker volumes
 mongodb_data/
-redis_data/ 
+redis_data/
+
+# Project specific
+.cursorrules
+instructions.md
