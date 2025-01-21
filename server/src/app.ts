@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import mongoose from 'mongoose';
@@ -6,7 +7,7 @@ import { Kafka } from 'kafkajs';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { buildSchema } from 'type-graphql';
-import { UserResolver } from './resolvers/UserResolver';
+import { AuthResolver } from './resolvers/AuthResolver';
 
 dotenv.config();
 
@@ -15,7 +16,7 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://admin:password@localhost:27017/ecommerce')
+mongoose.connect('mongodb://admin:password@localhost:27017/ecommerce?authSource=admin')
   .then(() => console.log('Connected to MongoDB'))
   .catch((err: Error) => console.error('MongoDB connection error:', err));
 
@@ -39,8 +40,8 @@ producer.connect().then(() => console.log('Connected to Kafka'))
 
 async function startApolloServer() {
   const schema = await buildSchema({
-    resolvers: [UserResolver],
-    validate: false,
+    resolvers: [AuthResolver],
+    validate: true,
   });
 
   const server = new ApolloServer({
