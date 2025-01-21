@@ -8,12 +8,23 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { buildSchema } from 'type-graphql';
 import { AuthResolver } from './resolvers/AuthResolver';
+import { ProductResolver } from './resolvers/ProductResolver';
+import { OrderResolver } from './resolvers/OrderResolver';
+import { PaymentResolver } from './resolvers/PaymentResolver';
+import { CashfreeResolver } from './resolvers/CashfreeResolver';
+import { ShiprocketResolver } from './resolvers/ShiprocketResolver';
+import { ParcelXResolver } from './resolvers/ParcelXResolver';
+import { EcomExpressResolver } from './resolvers/EcomExpressResolver';
+import webhookRoutes from './routes/webhooks';
 
 dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Webhook routes
+app.use('/webhooks', webhookRoutes);
 
 // MongoDB connection
 mongoose.connect('mongodb://admin:password@localhost:27017/ecommerce?authSource=admin')
@@ -40,7 +51,16 @@ producer.connect().then(() => console.log('Connected to Kafka'))
 
 async function startApolloServer() {
   const schema = await buildSchema({
-    resolvers: [AuthResolver],
+    resolvers: [
+      AuthResolver,
+      ProductResolver,
+      OrderResolver,
+      PaymentResolver,
+      CashfreeResolver,
+      ShiprocketResolver,
+      ParcelXResolver,
+      EcomExpressResolver
+    ],
     validate: true,
   });
 
